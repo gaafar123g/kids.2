@@ -15,6 +15,52 @@ setTimeout(function () {
   if (pre && !pre.classList.contains('hide')) pre.classList.add('hide');
 }, 4000);
 
+// ===== Navbar: fix to top once scrolled past the topbar, never hide =====
+(function () {
+  var navEl = document.getElementById('mainNavbar');
+  var spacerEl = document.getElementById('navbarSpacer');
+  var topbarEl = document.querySelector('.topbar');
+  if (!navEl || !spacerEl) return;
+
+  function updateNavbarFixed() {
+    var topbarH = topbarEl ? topbarEl.offsetHeight : 0;
+    if (window.scrollY > topbarH) {
+      if (!navEl.classList.contains('navbar-fixed')) {
+        spacerEl.style.height = navEl.offsetHeight + 'px';
+        navEl.classList.add('navbar-fixed');
+      }
+    } else if (navEl.classList.contains('navbar-fixed')) {
+      navEl.classList.remove('navbar-fixed');
+      spacerEl.style.height = '0px';
+    }
+  }
+  window.addEventListener('scroll', updateNavbarFixed);
+  window.addEventListener('resize', updateNavbarFixed);
+  window.addEventListener('load', updateNavbarFixed);
+  updateNavbarFixed();
+})();
+
+// ===== Mobile menu: auto-close on link click or outside click =====
+document.addEventListener('DOMContentLoaded', function () {
+  var navMenuEl = document.getElementById('navMenu');
+  var navToggler = document.querySelector('.navbar-toggler');
+  if (navMenuEl && navToggler && window.bootstrap) {
+    var bsCollapse = new bootstrap.Collapse(navMenuEl, { toggle: false });
+
+    navMenuEl.querySelectorAll('a.nav-link, #langToggleBtn').forEach(function (el) {
+      el.addEventListener('click', function () {
+        if (navMenuEl.classList.contains('show')) bsCollapse.hide();
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!navMenuEl.classList.contains('show')) return;
+      if (navMenuEl.contains(e.target) || navToggler.contains(e.target)) return;
+      bsCollapse.hide();
+    });
+  }
+});
+
 // ===== Language toggle (Arabic <> English) =====
 function setLang(lang) {
   document.documentElement.setAttribute('lang', lang);

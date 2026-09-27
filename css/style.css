@@ -12,8 +12,11 @@
 }
 html[lang="ar"] body{font-family:"Tajawal",sans-serif;}
 html[lang="en"] body{font-family:"Baloo 2","Poppins",sans-serif;}
-html{overflow-x:hidden;width:100%;}
-body{color:var(--dark);background:#fff;overflow-x:hidden;width:100%;}
+html{width:100%;}
+body{color:var(--dark);background:#fff;width:100%;}
+/* Scoped overflow safety-net: kept off html/body because overflow-x there
+   breaks position:sticky/fixed navbars in Safari & some mobile browsers. */
+.page-clip{overflow-x:hidden;width:100%;}
 h1,h2,h3,h4{font-weight:700;}
 a{text-decoration:none;}
 .d-none{display:none !important;}
@@ -46,7 +49,14 @@ section{scroll-margin-top:90px;}
 .topbar a{color:#fff;}
 .topbar i{color:var(--accent);}
 
-/* ===== Navbar ===== */
+/* ===== Navbar =====
+   Becomes position:fixed via JS once scrolled past the topbar, instead of
+   position:sticky, because overflow-x:hidden on ancestors (needed elsewhere
+   as an overflow safety-net) silently breaks position:sticky in Safari and
+   some mobile browsers — plain fixed positioning has no such issue. */
+#mainNavbar{width:100%;z-index:1030;}
+#mainNavbar.navbar-fixed{position:fixed;top:0;left:0;right:0;}
+#navbarSpacer{width:100%;height:0;}
 .navbar{padding:14px 0;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.05);}
 .navbar-brand img{height:52px;}
 .navbar-brand span{font-weight:800;font-size:1.3rem;color:var(--dark);}
